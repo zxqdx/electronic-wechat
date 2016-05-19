@@ -111,7 +111,8 @@ class WeChatWindow {
         this.loadURL(Common.WEB_WECHAT);
         console.log("Reconnect.");
       }
-    }, 5000)
+    }, 5000);
+    this.inervals[int] = true;
   }
 }
 
