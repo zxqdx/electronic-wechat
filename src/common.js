@@ -45,4 +45,6 @@ Common.MESSAGE_PREVENT_RECALL = "Blocked a message recall.";
 Common.MESSAGE_PREVENT_RECALL_CN = "阻止了一次撤回";
 Common.EMOJI_MAXIUM_SIZE = 120;
 
+Common.SETTINGS_WINDOW_SIZE = {width: 500, height: 300};
+
 module.exports = Common;

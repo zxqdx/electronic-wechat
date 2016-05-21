@@ -26,6 +26,14 @@ class MenuHandler {
             type: 'separator'
           },
           {
+            label: 'Preferences...',
+            accelerator: 'Command+,',
+            click: MenuHandler._settings
+          },
+          {
+            type: 'separator'
+          },
+          {
             label: 'Services',
             submenu: []
           },
@@ -221,6 +229,10 @@ class MenuHandler {
 
   static _update() {
     ipcRenderer.send('update');
+  }
+
+  static _settings() {
+    ipcRenderer.send('settings');
   }
 }
 module.exports = MenuHandler;

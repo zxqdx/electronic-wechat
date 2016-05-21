@@ -27,7 +27,7 @@ class WeChatWindow {
       splashWindow.hide();
       this.wechatWindow.show();
       this.wechatWindow.center();
-      this.loginState.current = this.loginState.WAITING;
+      this.loginState.current = this.loginState.NO;
     }
   }
 
@@ -52,7 +52,7 @@ class WeChatWindow {
 
     this.wechatWindow.webContents.setUserAgent(Common.USER_AGENT);
     if (Common.DEBUG_MODE) {
-      this.wechatWindow.webContents.openDevTools();
+      //this.wechatWindow.webContents.openDevTools();
     }
 
     this.connect();

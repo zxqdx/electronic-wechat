@@ -1,0 +1,22 @@
+#settings-header {
+    height: 32px;
+}
+
+#settings-menu {
+    width: 150px;
+    display: inline-block;
+}
+
+#settings-panels {
+    display: inline-block;
+}
+
+#settings-title {
+    display: block;
+    margin: auto;
+    width: 60px;
+    line-height: 32px;
+    font-family: sans-serif;
+    font-size: 18px;
+    color: #444;
+}

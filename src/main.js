@@ -11,12 +11,14 @@ const Common = require('./common');
 
 const SplashWindow = require('./windows/controllers/splash');
 const WeChatWindow = require('./windows/controllers/wechat');
+const SettingsWindow = require("./windows/controllers/settings");
 const AppTray = require('./windows/controllers/app_tray');
 
 class ElectronicWeChat {
   constructor() {
     this.wechatWindow = null;
     this.splashWindow = null;
+    this.settingsWindow = null;
     this.tray = null;
   }
 
@@ -29,6 +31,7 @@ class ElectronicWeChat {
     app.on('ready', ()=> {
       this.createSplashWindow();
       this.createWeChatWindow();
+      this.createSettingsWindow();
       this.createTray();
     });
 
@@ -62,17 +65,22 @@ class ElectronicWeChat {
     });
 
     ipcMain.on('reload', (event, repetitive) => {
-      if (repetitive) {
-        this.wechatWindow.loginState.current = this.wechatWindow.loginState.NULL;
-        this.wechatWindow.connect();
-      } else {
-        this.wechatWindow.loadURL(Common.WEB_WECHAT);
-      }
+      this.settingsWindow.reload();
+      // if (repetitive) {
+      //   this.wechatWindow.loginState.current = this.wechatWindow.loginState.NULL;
+      //   this.wechatWindow.connect();
+      // } else {
+      //   this.wechatWindow.loadURL(Common.WEB_WECHAT);
+      // }
     });
 
     ipcMain.on('update', (event, message) => {
       let updateHandler = new UpdateHandler();
       updateHandler.checkForUpdate(`v${app.getVersion()}`, false);
+    });
+    
+    ipcMain.on('settings', (event, message) => {
+      this.settingsWindow.show();
     });
   };
 
@@ -88,6 +96,11 @@ class ElectronicWeChat {
   createWeChatWindow() {
     this.wechatWindow = new WeChatWindow();
   }
+  
+  createSettingsWindow() {
+    this.settingsWindow = new SettingsWindow();
+  }
+  
 }
 
 new ElectronicWeChat().init();
