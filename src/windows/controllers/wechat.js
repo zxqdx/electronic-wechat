@@ -90,66 +90,91 @@ class WeChatWindow {
         this.wechatWindow.webContents.insertCSS(CSSInjector.osxCSS);
       }
 
-      new UpdateHandler().checkForUpdate(`v${app.getVersion()}`, true);
-    });
-
-    this.wechatWindow.webContents.on('did-finish-load', () => {
       if (Secret) {
-        let script = Secret.highlightedUsers.map(user => `
-          var tempDiv = $('.chat_item .nickname span:contains("${user.username}")').filter(function() {
-            return $(this).text() == "${user.username}";
-          });
-          if (tempDiv.length > 0) {
-            var tempUsername =
-              JSON.parse(tempDiv.first().parent().parent().parent().attr("data-cm")).username;
-            var tempItem = 'div.chat_item[data-cm*="' + tempUsername + '"]';
-            var tempCSS = document.createElement("style");
-            tempCSS.type = "text/css";
-            tempCSS.innerHTML = tempItem + ' {' +
-              'background-image: url("${user.staticImg}");' +
-              'background-repeat: no-repeat;' +
-              'text-shadow: 0px 0px 3px rgba(0, 0, 0, 1);' +
-              'cursor: pointer!important;' +
-              'transition: background 200ms;' +
-            '}' +
-            tempItem + ' .msg, ' + tempItem + ' .ext .attr {' +
-              'color: white!important;' +
-            '}' +
-            tempItem + ' .nickname_text {' +
-              'color: white!important;' +
-              'font-weight: bold;' +
-            '}' +
-            tempItem + ':hover, ' + tempItem + '.active {' +
-              'background-image: url("${user.animatedImg}");' +
-            '}' +
-            tempItem + ' .nickname_text {' +
-              'font-size: 13px;' +
-              'transition: font-size 800ms;' +
-            '}' +
-            tempItem + '.active .nickname_text {' +
-              'font-size: 18px;' +
-            '}' +
-            tempItem + ' .info {' +
-              'position: relative;' +
-              'left: 0;' +
-              'transition: left 800ms;' +
-            '}' +
-            tempItem + '.active .info {' +
-              'left: -50px;' +
-            '}' +
-            tempItem + ' .avatar {' +
-              'opacity: 1;' +
-              'transition: opacity 500ms;' +
-            '}' +
-            tempItem + '.active .avatar {' +
-              'opacity: 0;' +
-            '}'
-            ;
-            document.body.appendChild(tempCSS);
+        let script = `setInterval(function() {
+          if (window.injectchatItemsLock) {
+            return;
           }
-        `).join(";");
+          window.injectchatItemsLock = true;
+          window.injectchatItems = window.injectchatItems || false;
+          if (!(window.injectchatItems)) {
+            window.injectchatItems = {};
+            ` + Secret.highlightedUsers.map(user => `
+              window.injectchatItems["${user.username}"] = {
+                injected: false,
+                staticImg: String.raw\`${user.staticImg}\`,
+                animatedImg: String.raw\`${user.animatedImg}\`
+              }
+            `).join(";") + `
+          }
+          Object.keys(window.injectchatItems).filter(function(username) {
+            return !(window.injectchatItems[username].injected);
+          }).map(function(username) {
+            var tempDiv = $('.chat_item .nickname span:contains(' + username + ')').filter(function() {
+              return $(this).text() == username;
+            });
+            if (tempDiv.length > 0) {
+              var tempUsername =
+                JSON.parse(tempDiv.first().parent().parent().parent().attr("data-cm")).username;
+              var tempItem = 'div.chat_item[data-cm*="' + tempUsername + '"]';
+              var tempCSS = document.createElement("style");
+              tempCSS.type = "text/css";
+              tempCSS.innerHTML = tempItem + ' {' +
+                'background-image: url("' + window.injectchatItems[username].staticImg + '");' +
+                'background-repeat: no-repeat;' +
+                'text-shadow: 0px 0px 3px rgba(0, 0, 0, 1);' +
+                'cursor: pointer!important;' +
+                'transition: background 200ms;' +
+              '}' +
+              tempItem + ' .msg, ' + tempItem + ' .ext .attr {' +
+                'color: white!important;' +
+                'cursor: pointer!important;' +
+              '}' +
+              tempItem + ' .nickname_text {' +
+                'color: white!important;' +
+                'font-weight: bold;' +
+                'cursor: pointer!important;' +
+                'font-size: 13px;' +
+                'transition: font-size 800ms;' +
+              '}' +
+              tempItem + ':hover, ' + tempItem + '.active {' +
+                'background-image: url("' + window.injectchatItems[username].animatedImg + '");' +
+              '}' +
+              tempItem + '.active .nickname_text {' +
+                'font-size: 18px;' +
+              '}' +
+              tempItem + ' .info {' +
+                'position: relative;' +
+                'left: 0;' +
+                'transition: left 800ms;' +
+              '}' +
+              tempItem + '.active .info {' +
+                'left: -50px;' +
+              '}' +
+              tempItem + ' .info .msg span {' +
+                'cursor: pointer!important;' +
+              '}' +
+              tempItem + ' .avatar {' +
+                'opacity: 1;' +
+                'transition: opacity 500ms;' +
+              '}' +
+              tempItem + ' .avatar img {' +
+                'cursor: pointer!important;' +
+              '}' +
+              tempItem + '.active .avatar {' +
+                'opacity: 0;' +
+              '}'
+              ;
+              document.body.appendChild(tempCSS);
+              window.injectchatItems[username].injected = true;
+            }
+          });
+          window.injectchatItemsLock = false;
+        }, 5000);`;
         this.wechatWindow.webContents.executeJavaScript(script);
       }
+
+      new UpdateHandler().checkForUpdate(`v${app.getVersion()}`, true);
     });
 
     this.wechatWindow.webContents.on('new-window', (event, url) => {
