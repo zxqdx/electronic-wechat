@@ -147,7 +147,7 @@ class WeChatWindow {
             ;
             document.body.appendChild(tempCSS);
           }
-        `).join();
+        `).join(";");
         this.wechatWindow.webContents.executeJavaScript(script);
       }
     });
