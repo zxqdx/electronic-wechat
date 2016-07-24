@@ -8,3 +8,6 @@ node_modules
 
 *.sublime-project
 *.sublime-workspace
+
+src/secret.js
+
