@@ -102,23 +102,54 @@ class WeChatWindow {
           if (tempDiv.length > 0) {
             var tempUsername =
               JSON.parse(tempDiv.first().parent().parent().parent().attr("data-cm")).username;
+            var tempItem = 'div.chat_item[data-cm*="' + tempUsername + '"]';
             var tempCSS = document.createElement("style");
             tempCSS.type = "text/css";
-            tempCSS.innerHTML = 'div.chat_item[data-cm*="' + tempUsername + '"] {' +
+            tempCSS.innerHTML = tempItem + ' {' +
               'background-image: url("${user.staticImg}");' +
               'background-repeat: no-repeat;' +
+              'text-shadow: 0px 0px 3px rgba(0, 0, 0, 1);' +
+              'cursor: pointer!important;' +
+              'transition: background 200ms;' +
             '}' +
-            'div.chat_item[data-cm*="' + tempUsername + '"]:hover,' +
-            'div.chat_item.active[data-cm*="' + tempUsername + '"] {' +
+            tempItem + ' .msg, ' + tempItem + ' .ext .attr {' +
+              'color: white!important;' +
+            '}' +
+            tempItem + ' .nickname_text {' +
+              'color: white!important;' +
+              'font-weight: bold;' +
+            '}' +
+            tempItem + ':hover, ' + tempItem + '.active {' +
               'background-image: url("${user.animatedImg}");' +
-              'background-repeat: no-repeat;'
-            '}';
+            '}' +
+            tempItem + ' .nickname_text {' +
+              'font-size: 13px;' +
+              'transition: font-size 800ms;' +
+            '}' +
+            tempItem + '.active .nickname_text {' +
+              'font-size: 18px;' +
+            '}' +
+            tempItem + ' .info {' +
+              'position: relative;' +
+              'left: 0;' +
+              'transition: left 800ms;' +
+            '}' +
+            tempItem + '.active .info {' +
+              'left: -50px;' +
+            '}' +
+            tempItem + ' .avatar {' +
+              'opacity: 1;' +
+              'transition: opacity 500ms;' +
+            '}' +
+            tempItem + '.active .avatar {' +
+              'opacity: 0;' +
+            '}'
+            ;
             document.body.appendChild(tempCSS);
           }
         `).join();
         this.wechatWindow.webContents.executeJavaScript(script);
       }
-      
     });
 
     this.wechatWindow.webContents.on('new-window', (event, url) => {

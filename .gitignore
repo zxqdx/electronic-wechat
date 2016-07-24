@@ -10,4 +10,4 @@ node_modules
 *.sublime-workspace
 
 src/secret.js
-
+src/secret_img/
