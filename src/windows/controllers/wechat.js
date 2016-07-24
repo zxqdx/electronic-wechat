@@ -95,9 +95,10 @@ class WeChatWindow {
 
     this.wechatWindow.webContents.on('did-finish-load', () => {
       if (Secret) {
-        console.log("Len=" + Secret.highlightedUsers[0].animatedImg.length);
         let script = Secret.highlightedUsers.map(user => `
-          var tempDiv = $('.chat_item .nickname span:contains("${user.username}")');
+          var tempDiv = $('.chat_item .nickname span:contains("${user.username}")').filter(function() {
+            return $(this).text() == "${user.username}";
+          });
           if (tempDiv.length > 0) {
             var tempUsername =
               JSON.parse(tempDiv.first().parent().parent().parent().attr("data-cm")).username;
